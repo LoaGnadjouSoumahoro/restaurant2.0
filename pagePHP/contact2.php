@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +11,49 @@
 
 <body>
 
+<?php
+  // La connexion à la base de données
+  $bddPDO = new PDO('mysql:host=localhost;dbname=restaurant', 'root', '0207');
+  $bddPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+  // Récupération des données du formulaire
+  if(isset($_POST['enregistrer'])){
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
+    $fone = $_POST['fone'];
+    $date = $_POST['date'];
+    $time = $_POST['time'];
+    $city = $_POST['city'];
+    $text_area = $_POST['text_area'];
+
+    if(!empty($first_name) && !empty($last_name) && !empty($email) && !empty($fone) && !empty($date) && !empty($time) && !empty($city) && !empty($text_area)) {
+      // La requête préparée
+      $requete = $bddPDO->prepare('INSERT INTO back_office (first_name, last_name, email, fone, date, time, city, text_area) VALUES (:first_name, :last_name, :email, :fone, :date, :time, :city, :text_area)');
+
+      // Lier les paramètres de la base avec les contenus à insérer 
+      $requete->bindValue(':first_name', $first_name);
+      $requete->bindValue(':last_name', $last_name);
+      $requete->bindValue(':email', $email);
+      $requete->bindValue(':fone', $fone);
+      $requete->bindValue(':date', $date);
+      $requete->bindValue(':time', $time);
+      $requete->bindValue(':city', $city);
+      $requete->bindValue(':text_area', $text_area);
+
+      // Exécution
+      $result = $requete->execute();
+
+      if(!$result) {
+        echo "Un problème est survenu, l'enregistrement n'a pas été effectué";
+      } else {
+        echo "<script type='text/javascript'>alert('Vous êtes bien enregistré. Votre identifiant est: ".$bddPDO->lastInsertId()."')</script>";
+      }
+    } else {
+      echo "Tous les champs sont requis";
+    }
+  }
+?>
 
 
   <div class="masthead" style="background-image: url('./images/restaurant_foto_vin.jpg');">
@@ -97,7 +137,7 @@
             <!-- Formulaire Bootstrap -->
 
 
-            <form class="row g-3 needs-validation" action="./pagePHP/conexionContactBD.php" method="post" novalidate>
+            <form class="row g-3 needs-validation" action="contact2.php" method="post" novalidate>
               <div class="col-md-6">
                 <label for="validationCustom01" class="form-label h4 text-light">First name</label>
                 <input type="text" class="form-control" id="validationCustom01" name="first_name" value="Mark" required>
@@ -120,8 +160,8 @@
               </div>
 
               <div class="col-md-6">
-                <label for="telNo" class="form-label h4 text-light">Numéro de téléphone</label>
-                <input id="telNo" name="fone" type="tel" class="form-control">
+                <label for="fone" class="form-label h4 text-light">Numéro de téléphone</label>
+                <input id="fone" name="fone" type="tel" class="form-control">
               </div>
 
               <div class="col-md-6">
@@ -131,7 +171,7 @@
 
               <div class="col-md-6">
                 <label for="appt-time" class="form-label h4 text-light">Choisir une heure</label>
-                <input id="appt-time" type="time" name="time" class="form-control">
+                <input id="time" type="time" name="time" value="13:30" />
               </div>
 
               <div class="col-md-6">
@@ -149,7 +189,7 @@
 
 
               <div class="col-12">
-                <button class="btn btn-primary" type="submit" value="envoyer" name="envoyer">Submit form</button>
+                <button class="btn btn-primary" type="submit" value="Enregistrer" name="enregistrer">Submit form</button>
               </div>
             </form>
 
@@ -167,41 +207,7 @@
 
 
 
-    <script>
-      /* Javascript to show and hide cookie banner using localstorage */
-      /* Shows the Cookie banner */
-      function showCookieBanner() {
-        let cookieBanner = document.getElementById("cb-cookie-banner");
-        cookieBanner.style.display = "block";
-      }
-
-      /* Hides the Cookie banner and saves the value to localstorage */
-      function hideCookieBanner() {
-        localStorage.setItem("cb_isCookieAccepted", "yes");
-        let cookieBanner = document.getElementById("cb-cookie-banner");
-        cookieBanner.style.display = "none";
-      }
-
-      /* Checks the localstorage and shows Cookie banner based on it. */
-      function initializeCookieBanner() {
-        let isCookieAccepted = localStorage.getItem("cb_isCookieAccepted");
-        if (isCookieAccepted === null) {
-          localStorage.setItem("cb_isCookieAccepted", "no");
-          showCookieBanner();
-        }
-        if (isCookieAccepted === "no") {
-          showCookieBanner();
-        }
-      }
-    </script>
-
-
-
-
-
-
-
-    </script>
+  
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
